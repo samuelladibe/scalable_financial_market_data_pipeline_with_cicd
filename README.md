@@ -83,7 +83,7 @@ We will build a financial market data processing pipeline that ingests, processe
 - Infrastructure-as-code scripts to reproduce the setup.
 - Documentation of the architecture and tools used for your CV/portfolio.
 
-This project will:
+# This project will:
 
 1. Demonstrate your knowledge of DevOps tools and practices (CI/CD, IaC, monitoring, cloud infrastructure).
 2. Showcase your ability to handle real-time data streaming challenges.
