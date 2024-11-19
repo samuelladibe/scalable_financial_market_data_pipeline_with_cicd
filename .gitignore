@@ -1,0 +1,11 @@
+# Ignore .env
+.env
+
+# Ignore logs
+.log
+
+# Ignore secrets
+config/secrets.json
+
+# Ignore unnecessary files
+__pycache__
