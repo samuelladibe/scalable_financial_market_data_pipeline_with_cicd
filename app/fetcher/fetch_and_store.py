@@ -1,11 +1,12 @@
 from fetch_crypto import fetch_crypto_data
+import pandas as pd
 import psycopg2
 from psycopg2.extras import execute_values
 
 # Database connection details
 DB_NAME = "crypto_db"
-DB_USER = "postgres"  # Change this if your username is different
-DB_PASSWORD = "samyboss"  # Replace with your PostgreSQL password
+DB_USER = "samuel"  # Change this if your username is different
+DB_PASSWORD = "samuel"  # Replace with your PostgreSQL password
 DB_HOST = "localhost"
 DB_PORT = "5432"
 
@@ -74,3 +75,18 @@ try:
     store_data_in_db(crypto_df)
 except Exception as e:
     print(f"Error: {e}")
+
+
+# Db connection test
+# try:
+#     conn = psycopg2.connect(
+#         dbname="crypto_db",
+#         user="samuel",
+#         password="samuel",  # Leave blank for no password
+#         host="localhost",
+#         port="5432",
+#     )
+#     print("Connection successful!")
+#     conn.close()
+# except Exception as e:
+#     print("Connection failed:", e)

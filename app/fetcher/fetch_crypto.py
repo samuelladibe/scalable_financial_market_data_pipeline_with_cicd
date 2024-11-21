@@ -9,7 +9,7 @@ with open("config/secrets.json") as f:
 API_KEY = secrets["ALPHA_VANTAGE_API_KEY"]
 
 # Function to fetch crypto data
-def fetch_crypto_data(symbol: str, market: str, function: str = "DIGITAL_CURRENCY_INTRADAY"):
+def fetch_crypto_data(symbol: str, market: str, function: str = "DIGITAL_CURRENCY_DAILY"):
     """
     Fetch cryptocurrency data from Alpha Vantage.
     Args:
