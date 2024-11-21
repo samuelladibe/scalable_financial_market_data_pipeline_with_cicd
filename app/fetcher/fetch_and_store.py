@@ -5,7 +5,7 @@ from psycopg2.extras import execute_values
 # Database connection details
 DB_NAME = "crypto_db"
 DB_USER = "postgres"  # Change this if your username is different
-DB_PASSWORD = "admin"  # Replace with your PostgreSQL password
+DB_PASSWORD = "samyboss"  # Replace with your PostgreSQL password
 DB_HOST = "localhost"
 DB_PORT = "5432"
 
