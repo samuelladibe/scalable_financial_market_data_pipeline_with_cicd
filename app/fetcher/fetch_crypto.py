@@ -35,12 +35,11 @@ def fetch_crypto_data(symbol: str, market: str, function: str = "DIGITAL_CURRENC
         raise Exception("API limit reached. Response: " + str(data))
     elif "Error Message" in data:
         raise Exception(f"Error Message from API: {data['Error Message']}")
-    elif not data.get(f"Time Series ({function.split('_')[-1]})"):
+    elif f"Time Series (Digital Currency Daily)" not in data:
         raise Exception(f"No data returned. Full Response: {data}")
     
     # Extract time series data
-    time_series_key = f"Time Series ({function.split('_')[-1]})"
-    time_series = data.get(time_series_key, {})
+    time_series = data[f"Time Series (Digital Currency Daily)"]
     
     # Convert to DataFrame
     df = pd.DataFrame.from_dict(time_series, orient="index")
@@ -59,8 +58,8 @@ try:
     
     # Save to CSV
     current_time = datetime.now().strftime("%Y%m%d_%H%M%S")
-    crypto_df.to_csv(f"crypto_data_intraday_{current_time}.csv", index=False)
-    print("Intraday data saved to CSV!")
+    crypto_df.to_csv(f"crypto_data_daily_{current_time}.csv", index=False)
+    print("Daily data saved to CSV!")
 except Exception as e:
     print(f"Intraday data error: {e}")
     print("Trying daily data...")
