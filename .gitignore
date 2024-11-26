@@ -9,3 +9,7 @@ config/secrets.json
 
 # Ignore unnecessary files
 __pycache__
+
+#Ignore others
+crypto_data_intraday*.csv
+crypto_data_daily*.csv
