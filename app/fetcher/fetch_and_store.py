@@ -1,5 +1,5 @@
 import os
-from fetch_crypto import fetch_crypto_data
+from app.fetcher.fetch_crypto import fetch_crypto_data
 import pandas as pd
 import psycopg2
 from psycopg2.extras import execute_values
@@ -14,7 +14,7 @@ DB_PASSWORD = os.getenv("DB_PASSWORD") # Replace with your PostgreSQL password
 DB_HOST = os.getenv("DB_HOST")
 DB_PORT = os.getenv("DB_PORT")
 
-print(f"DB_NAME: {DB_NAME}, DB_USER: {DB_USER}, DB_PASSWORD: {DB_PASSWORD}, DB_HOST: {DB_HOST}, DB_PORT: {DB_PORT}")
+# print(f"DB_NAME: {DB_NAME}, DB_USER: {DB_USER}, DB_PASSWORD: {DB_PASSWORD}, DB_HOST: {DB_HOST}, DB_PORT: {DB_PORT}")
 
 def store_data_in_db(dataframe):
     """
@@ -32,39 +32,44 @@ def store_data_in_db(dataframe):
             host=DB_HOST,
             port=DB_PORT
         )
-        print("Connected to the database successfully!")
+        
+        if conn:
+            print("Connected to the database successfully!")
 
-        # Insert data
-        with conn.cursor() as cur:
-            # Define the insert query
-            insert_query = """
-            INSERT INTO crypto_prices (
-                timestamp, symbol, market, open_price, high_price, low_price, close_price, volume
-            ) VALUES %s
-            ON CONFLICT (timestamp, symbol, market) DO NOTHING;
-            """
+            # Insert data
+            with conn.cursor() as cur:
+                # Define the insert query
+                insert_query = """
+                INSERT INTO crypto_prices (
+                    timestamp, symbol, market, open_price, high_price, low_price, close_price, volume
+                ) VALUES %s
+                ON CONFLICT (timestamp, symbol, market) DO NOTHING;
+                """
 
-            # Prepare data for insertion
-            rows = [
-                (
-                    row["timestamp"],
-                    row["symbol"],
-                    row["market"],
-                    float(row["1. open"]),
-                    float(row["2. high"]),
-                    float(row["3. low"]),
-                    float(row["4. close"]),
-                    float(row["5. volume"])
-                )
-                for _, row in dataframe.iterrows()
-            ]
+                # Prepare data for insertion
+                rows = [
+                    (
+                        row["timestamp"],
+                        row["symbol"],
+                        row["market"],
+                        float(row["1. open"]),
+                        float(row["2. high"]),
+                        float(row["3. low"]),
+                        float(row["4. close"]),
+                        float(row["5. volume"])
+                    )
+                    for _, row in dataframe.iterrows()
+                ]
 
-            print("Rows to insert:", rows[:5]) # Print the first 5 rows
-            # Execute the query
-            execute_values(cur, insert_query, rows)
-            conn.commit()
-            print("Data inserted successfully!")
-    
+                print("Rows to insert:", rows[:5]) # Print the first 5 rows
+                # Execute the query
+                execute_values(cur, insert_query, rows)
+                conn.commit()
+                print("Data inserted successfully!")
+                
+                conn.close()
+        else:
+            print("Database connection failed. Exiting script.")
     except psycopg2.DatabaseError as db_err:
         print(f"Database error: {db_err}")
     except Exception as e:
