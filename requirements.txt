@@ -1,7 +1,7 @@
 requests
 pandas
-celery[flower]
+psycopg2-binary
+django-crontab
 celery[redis]
-celery[beat]
-python3-dotenv
+python-dotenv
 redis
