@@ -1,5 +1,5 @@
 import os
-from app.fetcher.fetch_crypto import fetch_crypto_data
+from fetch_crypto import fetch_crypto_data
 import pandas as pd
 import psycopg2
 from psycopg2.extras import execute_values

@@ -1,6 +1,6 @@
 import os
 import pandas as pd
-from app.fetcher.fetch_and_store import fetch_crypto_data, store_data_in_db
+from fetch_and_store import fetch_crypto_data, store_data_in_db
 
 def run_fetch_and_store():
     """
