@@ -1,5 +1,7 @@
 # Ignore .env
 .env
+.venv
+.myenv
 
 # Ignore logs
 .log
