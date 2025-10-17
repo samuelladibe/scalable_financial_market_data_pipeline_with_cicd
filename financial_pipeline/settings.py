@@ -21,7 +21,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # other apps...
+    'app',
+    'app.db',                      # Current app fetch and store
     'django_crontab',
     'app.fetcher',
 ]
@@ -74,15 +75,4 @@ DATABASES = {
         'HOST': DB_HOST,  # Or your database server
         'PORT': DB_PORT,  # Default PostgreSQL port
     }
-
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',  # Or another backend (e.g., 'django.db.backends.sqlite3')
-#         'NAME': 'crypto_db_new',
-#         'USER': 'sam',
-#         'PASSWORD': 'samuel',
-#         'HOST': 'localhost',  # Or your database server
-#         'PORT': '5432',  # Default PostgreSQL port
-#     }
 }
