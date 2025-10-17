@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from fetch_crypto import fetch_crypto_data
 import pandas as pd
 import psycopg2
@@ -41,7 +42,7 @@ def store_data_in_db(dataframe):
                 # Define the insert query
                 insert_query = """
                 INSERT INTO crypto_prices (
-                    timestamp, symbol, market, open_price, high_price, low_price, close_price, volume
+                    timestamp, symbol, market, open_price, high_price, low_price, close_price, volume, insertion_datetime
                 ) VALUES %s
                 ON CONFLICT (timestamp, symbol, market) DO NOTHING;
                 """
@@ -56,7 +57,8 @@ def store_data_in_db(dataframe):
                         float(row["2. high"]),
                         float(row["3. low"]),
                         float(row["4. close"]),
-                        float(row["5. volume"])
+                        float(row["5. volume"]),
+                        datetime.now().strftime("%Y%m%d %H%M%S")            # add insertion_datetime to handle metadata
                     )
                     for _, row in dataframe.iterrows()
                 ]

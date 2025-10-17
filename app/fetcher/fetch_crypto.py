@@ -58,7 +58,7 @@ try:
     
     # Save to CSV
     current_time = datetime.now().strftime("%Y%m%d_%H%M%S")
-    crypto_df.to_csv(f"crypto_data_daily_{current_time}.csv", index=False)
+    # crypto_df.to_csv(f"crypto_data_daily_{current_time}.csv", index=False)
     print("Daily data saved to CSV!")
 except Exception as e:
     print(f"Intraday data error: {e}")
@@ -72,7 +72,7 @@ except Exception as e:
         
         # Save to CSV
         current_time = datetime.now().strftime("%Y%m%d_%H%M%S")
-        crypto_df.to_csv(f"crypto_data_daily_{current_time}.csv", index=False)
+        # crypto_df.to_csv(f"crypto_data_daily_{current_time}.csv", index=False)
         print("Daily data saved to CSV!")
     except Exception as e:
         print(f"Daily data error: {e}")
