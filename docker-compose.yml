@@ -12,6 +12,8 @@ services:
     depends_on:
       - db
       - redis
+    env_file:
+      - .env
     environment:
       - ALLOWED_HOSTS=localhost, 127.0.0.1,financial_pipeline_app
       - DB_HOST=db
@@ -24,10 +26,8 @@ services:
   db:
     image: postgres:15
     container_name: financial_pipeline_db
-    environment:
-      POSTGRES_USER: sam
-      POSTGRES_PASSWORD: samuel
-      POSTGRES_DB: crypto_db_new
+    env_file:
+      - .env
     ports:
       - "5432:5432"
     volumes:
@@ -38,6 +38,21 @@ services:
     container_name: financial_pipeline_redis
     ports:
       - "6379:6379"
+  
+  # Dedicated service that runs the crypto data fectch scheduled job
+  cron_scheduler:
+    image: ${IMAGE_NAME:-financial_pipeline_app}:latest # Use the image built by Django service
+    depends_on:
+      - financial_pipeline_app        # Ensure the main app (and thus the DB) is running
+      - db
+    restart: "unless-stopped"
+    volumes:
+      # Mount the crontab config file
+      - ./crontab/crons.conf:/etc/crontabs/root:ro
+    
+    env_file:
+      - .env
+    command: /usr/sbin/crond -f -l 8
 
 volumes:
   postgres_data:
