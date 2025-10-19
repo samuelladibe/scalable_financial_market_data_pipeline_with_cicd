@@ -38,6 +38,14 @@ ROOT_URLCONF = 'financial_pipeline.urls'
 
 DEBUG = False
 
+# Define the location where Django will look for static files during development
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'), 
+]
+# Define the absolute path where 'collectstatic' will dump all static files
+# This is typically where a web server (like Nginx) would serve files from.
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 STATIC_URL = '/static/'
 
 TEMPLATES = [
