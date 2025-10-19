@@ -24,8 +24,8 @@ COPY . .
 # Convert the manage.py script to use Unix (LF) line endings
 RUN dos2unix /app/manage.py
 
-# Expose the port
+# Expose django the port
 EXPOSE 8000
 
 # Set the default command
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["sh", "-c", "python", "manage.py", "runserver", "0.0.0.0:8000"]
