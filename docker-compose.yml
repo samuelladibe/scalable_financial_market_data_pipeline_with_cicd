@@ -4,6 +4,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    image: myproject-app:latest
     container_name: financial_pipeline_app
     ports:
       - "8000:8000"
@@ -18,41 +19,62 @@ services:
       - ALLOWED_HOSTS=localhost, 127.0.0.1,financial_pipeline_app
       - DB_HOST=db
       - DB_PORT=5432
-      - DB_USER=sam
-      - DB_PASSWORD=samuel
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py collectstatic --noinput &&
+             python manage.py runserver 0.0.0.0:8000"
+    networks:
+      - financial_net
 
   db:
     image: postgres:15
     container_name: financial_pipeline_db
     env_file:
       - .env
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - financial_net
 
   redis:
     image: redis:7
     container_name: financial_pipeline_redis
     ports:
       - "6379:6379"
+    networks:
+      - financial_net
   
   # Dedicated service that runs the crypto data fectch scheduled job
   cron_scheduler:
-    image: ${IMAGE_NAME:-financial_pipeline_app}:latest # Use the image built by Django service
+    image: myproject-app:latest         # Use the image built by Django service
+    container_name: financial_pipeline_cron_scheduler
     depends_on:
-      - financial_pipeline_app        # Ensure the main app (and thus the DB) is running
+      - app
       - db
+      - redis
     restart: "unless-stopped"
     volumes:
       # Mount the crontab config file
       - ./crontab/crons.conf:/etc/crontabs/root:ro
-    
     env_file:
       - .env
-    command: /usr/sbin/crond -f -l 8
+    command: /usr/sbin/cron -f -l 8
+    networks:
+      - financial_net
 
 volumes:
   postgres_data:
+
+networks:
+  financial_net:  # Custom network name
+    driver: bridge
