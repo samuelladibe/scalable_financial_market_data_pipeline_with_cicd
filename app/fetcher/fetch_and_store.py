@@ -1,12 +1,9 @@
 import os
 from datetime import datetime
-from .fetch_crypto import fetch_crypto_data
+from app.fetcher.fetch_crypto import fetch_crypto_data
 import pandas as pd
 import psycopg2
 from psycopg2.extras import execute_values
-from dotenv import load_dotenv
-
-load_dotenv()
 
 # Database connection details
 DB_NAME = os.getenv("DB_NAME")
@@ -23,6 +20,8 @@ def store_data_in_db(dataframe):
     Args:
         dataframe (pd.DataFrame): DataFrame containing crypto data.
     """
+    # Initialize conn and cursor to None
+    conn = None
     # Connect to the database
     try:
         print("Attempting to connect to the database...")
@@ -76,21 +75,37 @@ def store_data_in_db(dataframe):
         print(f"Database error: {db_err}")
     except Exception as e:
         print(f"Unexpected error: {e}")
-    finally:
-        if conn:
-            conn.close()
-            print("Database connection closed.")
 
-# Fetch data and store in the database
-try:
-    crypto_df = fetch_crypto_data("BTC", "USD")
+def run_fetcher():
+    """
+    Main function to fetch data, clean it, and store it in the database.
+    """
+    try:
+        crypto_df = fetch_crypto_data("BTC", "USD")
+        
+        # Convert timestamp column to datetime
+        crypto_df["timestamp"] = pd.to_datetime(crypto_df["timestamp"])
+
+        print("Crypto DataFrame Columns:", crypto_df.columns)
+        print(crypto_df.head())
+        
+        # Store in the database
+        store_data_in_db(crypto_df)
+        print("Fetcher run complete.")
+        
+    except Exception as e:
+        print(f"Error in run_fetcher execution: {e}")
+
+# # Fetch data and store in the database
+# try:
+#     crypto_df = fetch_crypto_data("BTC", "USD")
     
-    # Convert timestamp column to datetime
-    crypto_df["timestamp"] = pd.to_datetime(crypto_df["timestamp"])
+#     # Convert timestamp column to datetime
+#     crypto_df["timestamp"] = pd.to_datetime(crypto_df["timestamp"])
 
-    print("Crypto DataFrame Columns:", crypto_df.columns)
-    print(crypto_df.head())
-    # Store in the database
-    store_data_in_db(crypto_df)
-except Exception as e:
-    print(f"Error: {e}")
+#     print("Crypto DataFrame Columns:", crypto_df.columns)
+#     print(crypto_df.head())
+#     # Store in the database
+#     store_data_in_db(crypto_df)
+# except Exception as e:
+#     print(f"Error: {e}")
