@@ -1,5 +1,10 @@
-# Ignore .env
+# Ignore unnecessary files
+__pycache__
+*.pyc
 .env
+.DS_Store
+
+# Ignore .env
 .venv
 .myenv
 venv
@@ -11,8 +16,8 @@ myenv
 # Ignore secrets
 config/secrets.json
 
-# Ignore unnecessary files
-__pycache__
+# Django static files directory
+staticfiles/
 
 #Ignore others
 crypto_data_intraday*.csv
