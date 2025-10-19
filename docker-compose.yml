@@ -68,6 +68,8 @@ services:
       - ./crontab/crons.conf:/etc/crontabs/root:ro
     env_file:
       - .env
+    environment:
+      - DB_HOST=db
     command: /usr/sbin/cron -f -l 8
     networks:
       - financial_net
