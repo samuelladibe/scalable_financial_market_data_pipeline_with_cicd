@@ -73,9 +73,54 @@ services:
     command: /usr/sbin/cron -f -l 8
     networks:
       - financial_net
+  
+  # PostgreSQL Exporter: Exposes DB metrics for Prometheus
+  postgres_exporter:
+    image: prometheuscommunity/postgres-exporter:latest
+    container_name: postgres_exporter
+    environment:
+      # Use same credentials as DB service to connect
+      DATA_SOURCE_NAME: postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}?sslmode=disable
+    networks:
+      - financial_net
+    depends_on:
+      - db
+
+  # Prometheus: Scraping and Storage
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro               # Config file mount
+      - prometheus_data:/prometheus
+    command: --config.file=/etc/prometheus/prometheus.yml --web.enable-lifecycle
+    ports:
+      - "9090:9090"
+    networks:
+      - financial_net
+    depends_on:
+      - postgres_exporter
+
+  # Grafana: Visualization
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - financial_net
+    depends_on:
+      - prometheus
+      - db                            # Grafana will connect to DB directly for crypto data
+    user: "1000"                      # Avoid permission issues
+    restart: unless-stopped
 
 volumes:
-  postgres_data:
+  postgres_data:                      # Volume for postgres data
+  prometheus_data:                    # Volume for Prometheus data
+  grafana_data:                       # Volume for Grafana data
 
 networks:
   financial_net:  # Custom network name
