@@ -6,6 +6,7 @@ on:
   push:
     branches:
       - main
+      - version-0
     paths:
       - 'terraform/**' # Trigger only on changes within the 'terraform' directory
 
