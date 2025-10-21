@@ -24,11 +24,11 @@ module "vpc" {
 
   # Isolated/Database Subnets (for RDS Postgres)
   database_subnets = ["10.0.21.0/24", "10.0.22.0/24"]
-  
+
   # Configuration for private subnets to access the internet (e.g., pulling Docker images)
   enable_nat_gateway = true
   single_nat_gateway = true # Saves cost by deploying one NAT Gateway
-  
+
   # Enable DNS resolution
   enable_dns_hostnames = true
   enable_dns_support   = true
