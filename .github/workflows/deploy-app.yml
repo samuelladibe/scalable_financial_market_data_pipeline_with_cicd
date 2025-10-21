@@ -1,0 +1,47 @@
+# .github/workflows/deploy-app.yml
+
+name: 'Application CI/CD'
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore: # Don't trigger if only infrastructure files change
+      - 'terraform/**' 
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    
+    # Needs the secrets for ECR URI and Cluster Name, which to pass here 
+    # (after Terraform runs and saves the outputs to a known location, like GitHub Environments)
+    # For simplicity now, hardcode the ECR URI and Cluster Name from output.tf 
+    # and put them in GitHub secrets/variables.
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: your-aws-region
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build, Tag, and Push Image to ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: financial-pipeline-app-repo                  # Matches ecs.tf name
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      # 🚨 The Final ECS Deployment Step requires creating the Task Definition first (in Terraform)
+      # You'll need to update the ECS Service with the new image tag here later.
+      # For now, this gets your image built and pushed!
