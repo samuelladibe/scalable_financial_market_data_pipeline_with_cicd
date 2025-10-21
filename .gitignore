@@ -18,6 +18,9 @@ config/secrets.json
 
 # Django static files directory
 staticfiles/
+awscliv2.zip
+awsc*
+aws
 
 #Ignore others
 crypto_data_intraday*.csv
