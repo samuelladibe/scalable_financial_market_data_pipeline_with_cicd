@@ -34,7 +34,7 @@ module "vpc" {
   enable_dns_support   = true
 
   tags = {
-    Environment = "Development"
+    Environment = "Development"           # Name the env
     Project     = "FinancialPipeline"
   }
 }

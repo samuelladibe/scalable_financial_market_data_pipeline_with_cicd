@@ -55,7 +55,7 @@ jobs:
         working-directory: ./terraform
 
       - name: Terraform Apply
-        # Run apply only on 'main' branch or with a manual review step
-        if: github.ref == 'refs/heads/main'
+        # Run apply only on 'main' or version-O branch or with a manual review step. To change later to main branch only
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/version-0'
         run: terraform apply -auto-approve
         working-directory: ./terraform
