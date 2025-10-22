@@ -9,6 +9,9 @@ on:
       - version-0
     paths:
       - 'terraform/**' # Trigger only on changes within the 'terraform' directory
+permissions:
+  contents: read        # Required to checkout the code
+  id-token: write
 
 jobs:
   terraform:
