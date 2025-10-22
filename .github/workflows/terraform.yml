@@ -12,12 +12,13 @@ on:
       - 'terraform/**' # Trigger only on changes within the 'terraform' directory
   # 2. Chaining Trigger: Runs when the deployment workflow successfully completes
   workflow_run:
-    workflows: ["Application CI/CD"] # Name of the *other* workflow (deploy-app.yml)
-    types: [completed]
+    workflows: ["Application CI/CD"] # Name of the other workflow (deploy-app.yml)
+    types: 
+      - completed
     branches:
       - main
       - version-0
-      
+
 permissions:
   contents: read        # Required to checkout the code
   id-token: write
