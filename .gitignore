@@ -25,3 +25,7 @@ aws
 #Ignore others
 crypto_data_intraday*.csv
 crypto_data_daily*.csv
+
+# Terraform generated files
+.terraform/
+.terraform.lock.hcl

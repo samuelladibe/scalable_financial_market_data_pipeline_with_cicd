@@ -4,7 +4,7 @@ terraform {
     bucket         = "amzon-cfaproject-terraform-state-bucket"
     key            = "dev/ecs-fargate.tfstate" # Bucket path to state file on AWS S3
     region         = "eu-north-1"
-    dynamodb_table = "cfaproject-tf-locks"
+    dynamodb_table = "cfaproject-tf-locks" # dynamoDB table
     encrypt        = true
   }
 }
