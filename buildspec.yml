@@ -1,0 +1,42 @@
+version: 0.2
+
+env:
+variables:
+DOCKER_IMAGE: ${ECR_REPOSITORY_URL}:${IMAGE_TAG}
+
+phases:
+pre_build:
+commands:
+- echo Logging in to Amazon ECR...
+# Corrected ECR login URL and ensures proper variable expansion
+- aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS\_https://www.google.com/search?q=REGION.amazonaws.com
+\- REPOSITORY\_URI=${ECR_REPOSITORY_URL}
+
+Fixed list syntax and ensured correct variable assignment
+
+COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+
+IMAGE_TAG=${COMMIT_HASH:-latest}
+
+build:
+commands:
+- echo Build started on date
+- echo Building the Docker image...
+- docker build -t $REPOSITORY_URI:latest .
+- docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
+
+post_build:
+commands:
+- echo Build completed on date
+- echo Pushing the Docker images...
+- docker push $REPOSITORY_URI:latest
+- docker push $REPOSITORY_URI:$IMAGE_TAG
+- echo Writing image definitions file...
+
+# The 'name' must match the container name in your ecs.tf task definition!
+- printf '[{"name":"financial-app-container","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+
+
+artifacts:
+files:
+- imagedefinitions.json
