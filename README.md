@@ -3,7 +3,7 @@
 ## Problem to Solve:
 Financial institutions need to process real-time market data (e.g., stock prices, forex rates, cryptocurrency data) at scale.This involves:
 
-1. Streaming real-time data from APIs or other data sources (e.g., Bloomberg, Alpha Vantage, Yahoo Finance).
+1. Streaming real-time data from APIs or other data sources (Alpha Vantage).
 2. Processing and storing the data efficiently in a database (e.g., for analytics, predictions, or dashboarding).
 3. Ensuring high availability, fault tolerance, and secure infrastructure to meet compliance standards.
 4. Implementing CI/CD pipelines for deploying updates to the data processing pipeline and dashboards without downtime.
@@ -15,22 +15,22 @@ Financial institutions need to process real-time market data (e.g., stock prices
 We will build a financial market data processing pipeline that ingests, processes, and visualizes financial market data. Here’s the architecture we'll implement:
 
     1. Ingestion:
-        Use Apache Kafka or RabbitMQ for ingesting real-time data streams from financial APIs.
-        Use AWS Lambda or Python microservices to pull data periodically if needed.
+        Use API Rest calls for ingesting daily data streams from financial APIs.
+        Use Python microservices or Crontab to pull data periodically if needed(twice a day).
 
     2. Data Processing:
         Write microservices in Python using FastAPI or Flask to clean and transform data.
-        Store processed data in a scalable database like PostgreSQL (relational) or MongoDB (NoSQL).
+        Store processed data in a scalable database like PostgreSQL (relational).
 
     3. Visualization:
-        Build a dashboard using Grafana or Streamlit for displaying financial data trends.
-        Create automated alerts for unusual market activity.
+        Build a dashboard using Grafana and Prometheus for displaying financial data trends.
+        Create automated alerts for unusual market activity (advanced steps)
 
     4. DevOps Integration:
         Use Docker to containerize all services (ingestion, processing, database, dashboard).
         Orchestrate containers using *Kubernetes (K8s)* for scaling and resilience.
-        Automate CI/CD pipelines using Jenkins, GitHub Actions, or GitLab CI/CD to deploy code and infrastructure.
-        Use Terraform or Ansible for infrastructure as code (IaC) to provision resources in AWS/GCP/Azure.
+        Automate CI/CD pipelines using GitHub Actions to deploy code and infrastructure.
+        Use Terraform or Ansible for infrastructure as code (IaC) to provision resources in AWS.
         Set up a monitoring stack (e.g., Prometheus + Grafana or ELK Stack) to monitor system health, API latency, and storage utilization.
 
     5. Security and Compliance:
@@ -39,20 +39,20 @@ We will build a financial market data processing pipeline that ingests, processe
 
 ## Technologies to Use:
 
-- Data Ingestion & Processing: Apache Kafka, Python (FastAPI/Flask)
-- Data Storage: PostgreSQL, MongoDB, or Amazon S3 for historical data
-- Containerization & Orchestration: Docker, Kubernetes
-- CI/CD: Jenkins, GitHub Actions, or GitLab CI/CD
-- Monitoring & Alerting: Prometheus, Grafana, ELK Stack
-- Infrastructure as Code: Terraform, Ansible
-- Cloud: AWS, GCP, or Azure
-- Dashboarding: Grafana, Streamlit, or Tableau
+- Data Ingestion & Processing: Python (FastAPI/Flask)
+- Data Storage: PostgreSQL, Amazon S3 for historical data
+- Containerization & Orchestration: Docker
+- CI/CD: GitHub Actions
+- Monitoring & Alerting: Prometheus, Grafana
+- Infrastructure as Code: Terraform
+- Cloud: AWS
+- Dashboarding: Grafana
 
 ## Steps to Realize the Project:
 
 1. Research and Gather Requirements:
-    - Choose a financial data API (e.g., Alpha Vantage, Quandl, Yahoo Finance, CoinGecko for crypto).
-    - Define key metrics to track (e.g., stock price volatility, trends, trading volume).
+    - Choose a financial data API (Alpha Vantage).
+    - Define key metrics to track (trends, trading volume).
 
 2. Build the Pipeline:
     - Write Python scripts to fetch and process API data.
@@ -68,7 +68,7 @@ We will build a financial market data processing pipeline that ingests, processe
     - Monitor application performance, data ingestion latency, and API errors using Prometheus and Grafana.
 
 5. Deploy the Dashboard:
-    - Use Grafana, Streamlit, or a custom React dashboard to visualize data trends.
+    - Use Grafana to visualize data trends.
     - Enable user authentication to secure the dashboard.
 
 6. Optimize for Scale:
@@ -77,15 +77,15 @@ We will build a financial market data processing pipeline that ingests, processe
 
 # Expected Output:
 
-- A real-time dashboard displaying stock market or crypto data trends.
-- A fully automated pipeline deployed in a cloud environment (e.g., AWS/GCP/Azure).
+- A daily dashboard displaying Bitcoin crypto data trends.
+- A fully automated pipeline deployed in a cloud environment (AWS to redeploy, images cost money).
 - Monitoring and alerting for data pipeline health.
 - Infrastructure-as-code scripts to reproduce the setup.
-- Documentation of the architecture and tools used for your CV/portfolio.
+- Documentation of the architecture and tools used for my CV/portfolio.
 
 # This project will:
 
-1. Demonstrate your knowledge of DevOps tools and practices (CI/CD, IaC, monitoring, cloud infrastructure).
-2. Showcase your ability to handle real-time data streaming challenges.
-3. Provide experience with cloud-native solutions and modern technologies like Kubernetes, Terraform, and Prometheus.
-4. Strengthen your understanding of finance domain requirements (e.g., security, compliance, scalability).
+1. Demonstrate my knowledge of DevOps tools and practices (CI/CD, IaC, monitoring, cloud infrastructure).
+2. Showcase my ability to handle real-time data streaming challenges.
+3. Provide experience with cloud-native solutions and modern technologies like Terraform, and Prometheus.
+4. Strengthen my understanding of finance domain requirements (e.g., security, compliance, scalability).

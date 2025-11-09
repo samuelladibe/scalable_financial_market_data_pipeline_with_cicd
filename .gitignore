@@ -1,0 +1,31 @@
+# Ignore unnecessary files
+__pycache__
+*.pyc
+.env
+.DS_Store
+
+# Ignore .env
+.venv
+.myenv
+venv
+myenv
+
+# Ignore logs
+.log
+
+# Ignore secrets
+config/secrets.json
+
+# Django static files directory
+staticfiles/
+awscliv2.zip
+awsc*
+aws
+
+#Ignore others
+crypto_data_intraday*.csv
+crypto_data_daily*.csv
+
+# Terraform generated files
+.terraform/
+.terraform.lock.hcl

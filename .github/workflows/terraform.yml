@@ -1,0 +1,61 @@
+# .github/workflows/terraform.yml
+
+name: 'Terraform Infrastructure'
+
+on:
+  # 1. Standard Trigger: Runs when infrastructure files change and are pushed
+  push:
+    branches:
+      - main
+      - version-0
+    paths:
+      - 'terraform/**' # Trigger only on changes within the 'terraform' directory
+  # 2. Chaining Trigger: Runs when the deployment workflow successfully completes
+  workflow_run:
+    workflows: ["Application CI/CD"] # Name of the other workflow (deploy-app.yml)
+    types: 
+      - completed
+    branches:
+      - main
+      - version-0
+
+permissions:
+  contents: read        # Required to checkout the code
+  id-token: write
+
+jobs:
+  terraform:
+    name: 'Terraform Apply'
+    runs-on: ubuntu-latest
+    environment: aws-cfp-dev
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-north-1
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3 # HashiCorp's official action
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: ./terraform # Assuming your .tf files are here
+
+      - name: Terraform Validate
+        run: terraform validate
+        working-directory: ./terraform
+
+      - name: Terraform Plan
+        run: terraform plan -no-color
+        working-directory: ./terraform
+
+      - name: Terraform Apply
+        # Run apply only on 'main' or version-O branch or with a manual review step. To change later to main branch only
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/version-0'
+        run: terraform apply -auto-approve
+        working-directory: ./terraform

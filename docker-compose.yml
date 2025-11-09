@@ -1,0 +1,126 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: myproject-app:latest
+    container_name: financial_pipeline_app
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - redis
+    env_file:
+      - .env
+    environment:
+      - ALLOWED_HOSTS=localhost, 127.0.0.1,financial_pipeline_app
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py collectstatic --noinput &&
+             python manage.py runserver 0.0.0.0:8000"
+    networks:
+      - financial_net
+
+  db:
+    image: postgres:15
+    container_name: financial_pipeline_db
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - financial_net
+
+  redis:
+    image: redis:7
+    container_name: financial_pipeline_redis
+    ports:
+      - "6379:6379"
+    networks:
+      - financial_net
+  
+  # Dedicated service that runs the crypto data fectch scheduled job
+  cron_scheduler:
+    image: myproject-app:latest         # Use the image built by Django service
+    container_name: financial_pipeline_cron_scheduler
+    depends_on:
+      - app
+      - db
+      - redis
+    restart: "unless-stopped"
+    volumes:
+      # Mount the crontab config file
+      - ./crontab/crons.conf:/etc/crontabs/root:ro
+    env_file:
+      - .env
+    environment:
+      - DB_HOST=db
+    command: /usr/sbin/cron -f -l 8
+    networks:
+      - financial_net
+  
+  # PostgreSQL Exporter: Exposes DB metrics for Prometheus
+  postgres_exporter:
+    image: prometheuscommunity/postgres-exporter:latest
+    container_name: postgres_exporter
+    environment:
+      # Use same credentials as DB service to connect
+      DATA_SOURCE_NAME: postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}?sslmode=disable
+    networks:
+      - financial_net
+    depends_on:
+      - db
+
+  # Prometheus: Scraping and Storage
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro               # Config file mount
+      - prometheus_data:/prometheus
+    command: --config.file=/etc/prometheus/prometheus.yml --web.enable-lifecycle
+    ports:
+      - "9090:9090"
+    networks:
+      - financial_net
+    depends_on:
+      - postgres_exporter
+
+  # Grafana: Visualization
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "5000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - financial_net
+    depends_on:
+      - prometheus
+      - db                            # Grafana will connect to DB directly for crypto data
+    user: "1000"                      # Avoid permission issues
+    restart: unless-stopped
+
+volumes:
+  postgres_data:                      # Volume for postgres data
+  prometheus_data:                    # Volume for Prometheus data
+  grafana_data:                       # Volume for Grafana data
+
+networks:
+  financial_net:  # Custom network name
+    driver: bridge
