@@ -1,4 +1,4 @@
-# Project Idea: "Building a Scalable Financial Market Data Pipeline with Monitoring and CI/CD"
+# Project : Building a Scalable Financial Market Data Pipeline with Monitoring and CI/CD
 
 ## Problem to Solve:
 Financial institutions need to process real-time market data (e.g., stock prices, forex rates, cryptocurrency data) at scale.This involves:
